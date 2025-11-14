@@ -1,0 +1,96 @@
+import java.util.InputMismatchException;
+import java.util.Scanner;
+
+// Custom exception for invalid PIN
+class InvalidPinException extends Exception {
+    public InvalidPinException(String message) {
+        super(message);
+    }
+}
+
+public class ATMSystem {
+
+    public static void main(String[] args) {
+
+        Scanner sc = new Scanner(System.in);
+        int correctPin = 1234;
+        double balance = 5000.00;
+
+        try {
+            // PIN Validation
+            System.out.print("Enter your 4-digit PIN: ");
+            int userPin = sc.nextInt();
+
+            if (userPin != correctPin) {
+                throw new InvalidPinException("❌ Invalid PIN. Access Denied!");
+            }
+
+            System.out.println("✔ PIN Verified Successfully!");
+            
+            // ATM Menu
+            while (true) {
+                System.out.println("\n===== ATM MENU =====");
+                System.out.println("1. Check Balance");
+                System.out.println("2. Deposit Amount");
+                System.out.println("3. Withdraw Amount");
+                System.out.println("4. Exit");
+                System.out.print("Choose an option: ");
+
+                int choice = sc.nextInt();
+
+                switch (choice) {
+
+                    case 1:
+                        System.out.println("💰 Your Balance: " + balance);
+                        break;
+
+                    case 2:
+                        try {
+                            System.out.print("Enter deposit amount: ");
+                            double dep = sc.nextDouble();
+                            if (dep <= 0) {
+                                throw new Exception("Amount must be greater than 0!");
+                            }
+                            balance += dep;
+                            System.out.println("✔ Amount Deposited Successfully!");
+                        } catch (Exception e) {
+                            System.out.println("❌ Invalid Deposit: " + e.getMessage());
+                        }
+                        break;
+
+                    case 3:
+                        try {
+                            System.out.print("Enter withdrawal amount: ");
+                            double wd = sc.nextDouble();
+                            if (wd > balance) {
+                                throw new Exception("Insufficient Balance!");
+                            } else if (wd <= 0) {
+                                throw new Exception("Amount must be greater than 0!");
+                            }
+                            balance -= wd;
+                            System.out.println("✔ Withdraw Successful!");
+                        } catch (Exception e) {
+                            System.out.println("❌ Invalid Withdrawal: " + e.getMessage());
+                        }
+                        break;
+
+                    case 4:
+                        System.out.println("👋 Thank you for using the ATM!");
+                        System.exit(0);
+
+                    default:
+                        System.out.println("❌ Invalid Choice! Try again.");
+                }
+            }
+
+        } catch (InputMismatchException e) {
+            System.out.println("❌ Error: Please enter numbers only!");
+        } catch (InvalidPinException e) {
+            System.out.println(e.getMessage());
+        } catch (Exception e) {
+            System.out.println("❌ Unexpected Error: " + e.getMessage());
+        } finally {
+            sc.close();
+        }
+    }
+}
